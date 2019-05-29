@@ -31,10 +31,14 @@ def test_parse(data):
         os.unlink(filename)
 
 def main():
+    n = sys.argv[-1]
     try:
-        n = int(sys.argv[-1])
+        if n not in ['inf','oo']:
+            n = int(n)
+            if n <= 0:
+                raise ValueError
     except Exception as e:
-        print('Please provide a number'
+        print('Please provide a postive number'
                 ' for the path length.'
                 ,file=sys.stderr)
         sys.exit(1)

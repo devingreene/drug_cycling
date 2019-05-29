@@ -16,7 +16,7 @@ def bitstringconverter(l):
 
 parser = ArgumentParser()
 parser.add_argument('file')
-parser.add_argument('pathlength',type=int,nargs='?')
+parser.add_argument('pathlength',nargs='?')
 parser.add_argument('-d',dest='d',type=float,metavar="discount",
         help="Discount Factor")
 parser.add_argument('--discount',dest='d',type=float,metavar="discount",

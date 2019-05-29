@@ -2,14 +2,34 @@ from treatment import Treatment
 import sys
 from collections import deque,OrderedDict
 
+class ConvergenceFailure(Exception):
+    pass
 
 cache = {}
 
-def find_best_for_n_steps(treats:list,n:int)->dict:
+def find_best_for_n_steps(treats:list,n)->dict:
     'Find the treatment for maximizing the probability of lasting '\
     '>= n steps'
 
     cache.clear()
+    if n in [ 'oo', 'inf' ]:
+        win = deque([None]*10)
+        for i in range(20,1000):
+            win.append(find_best_for_n_steps(treats,i))
+            win.popleft()
+            if [win[0]]*10 == list(win):
+                return win.pop()
+        else:
+            raise ConvergenceFailure(
+                    "Sequence failed to converge")
+
+    try:
+        n = int(n)
+        if n <= 0:
+            raise ValueError
+    except ValueError as e:
+        raise e("Path length must be a postive integer")
+
     return _find_best_for_n_steps(treats,n)
 
 # Let the cache ``catch up''
