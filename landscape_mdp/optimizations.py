@@ -14,21 +14,30 @@ def find_best_for_n_steps(treats:list,n)->dict:
     cache.clear()
     if n in [ 'oo', 'inf' ]:
         win = deque([None]*10)
-        for i in range(20,1000):
-            win.append(find_best_for_n_steps(treats,i))
+        for i in range(10,1000):
+            win.append(_find_best_for_n_steps(treats,i))
             win.popleft()
-            if [win[0]]*10 == list(win):
+            # Drop probabilities
+            win_sans_probs = \
+                    [ { a:b[0] for a,b in w.items() } \
+                    if w is not None else None \
+                    for w in win ]
+                    
+            if [win_sans_probs[0]]*10 == \
+                    list(win_sans_probs):
                 return win.pop()
         else:
             raise ConvergenceFailure(
                     "Sequence failed to converge")
 
-    try:
-        n = int(n)
-        if n <= 0:
-            raise ValueError
-    except ValueError as e:
-        raise e("Path length must be a postive integer")
+    else:
+        try:
+            n = int(n)
+            if n <= 0:
+                raise ValueError
+        except ValueError:
+            raise ValueError("Path length must be "\
+                    "a positive integer")
 
     return _find_best_for_n_steps(treats,n)
 
@@ -74,6 +83,8 @@ def __find_best_for_n_steps(treats,n):
                 if gadj is not None:
                     opttreats[g] = (t,1)
                     break
+            else:
+                opttreats[g] = (None,0)
 
     else:
         opttreatsm1 = __find_best_for_n_steps(treats,n-1)
@@ -83,10 +94,12 @@ def __find_best_for_n_steps(treats,n):
                 gadj = t.adj.get(g)
                 if gadj is not None:
                     for ag,p in gadj.items():
-                        if p != 0:
-                            opts[t] += p * opttreatsm1.get(ag,[0,0])[1]
-            if any(opts.values()):
-                opttreats[g] = max(opts.items(),key=lambda x:x[1])
+                        opts[t] += p * opttreatsm1.get(ag,[0,0])[1]
+            if not any(opts.values()):
+                opttreats[g] = (None,0)
+            else:
+                opttreats[g] = max(opts.items(),
+                    key=lambda x:x[1],default=(None,0))
 
     cache[n] = opttreats
     return opttreats
@@ -94,7 +107,7 @@ def __find_best_for_n_steps(treats,n):
 def max_expected_length(treats:list,discount = 0.9,\
         maxiter = 1000,eps=0.33e-3):
     genotypes = collect_genotypes(treats)
-    if discount >= 1 or discount < 0:
+    if discount >= 1 or discount <= 0:
         raise ValueError("`discount' must be < 1 and positive")
     win = deque(4*[None])
     state = OrderedDict.fromkeys(genotypes,(None,1)) 

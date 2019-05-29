@@ -56,17 +56,22 @@ if not args.e:
         print("Must have path length for this option",
                 file=sys.stderr)
         sys.exit(1)
-    res = find_best_for_n_steps(tl,length)
-    print('To maximize probability of >= '+\
-            str(args.pathlength)+' steps:')
+    res = find_best_for_n_steps(tl,args.pathlength)
+    symb = "oo" if args.pathlength in ["oo","inf"] \
+            else ">= "+str(args.pathlength)
+    print('To maximize probability of ' + symb + \
+            ' steps:')
     print('Genotype','Treatment','Probability')
     for g in genotypes:
-        if g in res:
+        if hasattr(res[g][0],"name"):
             treat = res[g][0].name
-            prob  = res[g][1]
-        if g not in res:
+        else:
             treat = 'None'
-            prob = 0
-        print(f'{tobs(g):>8}',\
-                f'{treat:>9}',\
-                f'{prob:>11.5f}')
+        prob  = res[g][1]
+
+        if args.pathlength in ['oo','inf']:
+            prob = '--'
+        print(f'{tobs(g):>8}',
+                f'{treat:>9}',
+                (format('--','>11s') if prob == '--' 
+                else f'{prob:>11.5f}'))
