@@ -80,10 +80,12 @@ def __find_best_for_n_steps(treats,n):
             for t in treats:
                 gadj = t.adj.get(g)
                 # It's not a trap in this treatment
-                if gadj is not None:
+                if gadj is not None and \
+                        any(gadj.values()):
                     opttreats[g] = (t,1)
                     break
             else:
+                # It's a trap
                 opttreats[g] = (None,0)
 
     else:
@@ -105,7 +107,7 @@ def __find_best_for_n_steps(treats,n):
     return opttreats
 
 def max_expected_length(treats:list,discount = 0.9,\
-        maxiter = 1000,eps=0.33e-3):
+        maxiter = 1000,eps=0.33e-5):
     genotypes = collect_genotypes(treats)
     if discount >= 1 or discount <= 0:
         raise ValueError("`discount' must be < 1 and positive")
