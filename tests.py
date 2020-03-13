@@ -13,7 +13,7 @@ for a,b in tests:
     if not first:
         print("\n\n",flush=True)
     first = False
-    args = ["python3","-m","landscape_mdp.tests."+a,
+    args = ["python3","-m","drug_cycling.tests."+a,
             str(b)]
     sargs = " ".join(args)
     print("*"*(len(sargs)+5),flush=True)
