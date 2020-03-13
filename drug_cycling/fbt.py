@@ -1,6 +1,6 @@
-from optimizations import find_best_for_n_steps, \
+from .optimizations import find_best_for_n_steps, \
         max_expected_length, collect_genotypes
-from treatment import load_treatments_from_file
+from .treatment import load_treatments_from_file
 from argparse import ArgumentParser
 import sys
 
