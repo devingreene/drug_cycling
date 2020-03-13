@@ -1,4 +1,4 @@
-from treatment import Treatment
+from .treatment import Treatment
 import sys
 from collections import deque,OrderedDict
 

@@ -1,8 +1,8 @@
 import tempfile,os,sys
-from treatment import *
-from optimizations import find_best_for_n_steps,\
+from ..treatment import *
+from ..optimizations import find_best_for_n_steps,\
         max_expected_length
-from tests.landscapes import *
+from .landscapes import *
 from argparse import ArgumentParser
 
 divide = "\n"+("*"*12).center(70)
